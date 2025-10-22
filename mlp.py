@@ -31,8 +31,10 @@ import torchvision.transforms as transforms
 
 def main():
     transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomCrop(32, padding=4),
+    transforms.ToTensor(),
+    transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5))
     ])
 
     trainset = torchvision.datasets.CIFAR10(
@@ -46,8 +48,9 @@ def main():
     model = MLP_one().to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)#lr is learning rate
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=15, gamma=0.5)
 
-    for epoch in range(50):#epoch is trained once over set of data
+    for epoch in range(50):  # epoch is trained once over set of data
         for i, (inputs, labels) in enumerate(trainloader, 0):
             inputs, labels = inputs.to(device), labels.to(device)
 
@@ -59,6 +62,10 @@ def main():
 
             if i % 200 == 0:
                 print(f"[{epoch+1}, {i+1}] loss: {loss.item():.3f}")
+
+        scheduler.step()  # ✅ update learning rate at the end of each epoch
+        print(f"Epoch {epoch+1} complete. Current LR: {scheduler.get_last_lr()}")
+
     torch.save(model.state_dict(), "mlp_one_cifar10.pth")
     print("Training complete ✅")
 
