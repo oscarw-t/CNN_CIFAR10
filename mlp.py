@@ -10,8 +10,11 @@ class MLP_one(nn.Module):
     def __init__(self):
         super().__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
+        
         self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(6, 16, 5)    
+        
+        self.conv2 = nn.Conv2d(6, 16, 5)
+
         self.fc1 = nn.Linear(16 * 5 * 5, 120)
         self.fc2 = nn.Linear(120, 84)       
         self.fc3 = nn.Linear(84, 10)
@@ -39,7 +42,7 @@ def main():
 
     trainset = torchvision.datasets.CIFAR10(
         root='./data', train=True, download=True, transform=transform)
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, shuffle=True)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print('CUDA available:', torch.cuda.is_available())
@@ -50,7 +53,7 @@ def main():
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)#lr is learning rate
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=15, gamma=0.5)
 
-    for epoch in range(50):  # epoch is trained once over set of data
+    for epoch in range(10):  # epoch is trained once over set of data
         for i, (inputs, labels) in enumerate(trainloader, 0):
             inputs, labels = inputs.to(device), labels.to(device)
 
@@ -67,7 +70,7 @@ def main():
         print(f"Epoch {epoch+1} complete. Current LR: {scheduler.get_last_lr()}")
 
     torch.save(model.state_dict(), "mlp_one_cifar10.pth")
-    print("Training complete ✅")
+    print("Training complete ✅ and saved")
 
 if __name__ == "__main__":
     main()

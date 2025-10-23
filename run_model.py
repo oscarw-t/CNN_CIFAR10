@@ -25,7 +25,7 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=64, shuffle=False)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = MLP_one().to(device)
 try:
-    model.load_state_dict(torch.load("C:/Users/oscar/Desktop/KCLYEAR2/Projects/CNN_CIFAR10/mlp_one_cifar10.pth", map_location=device))
+    model.load_state_dict(torch.load("C:/Users/oscar/Desktop/KCLYEAR2/Projects/CNN_CIFAR10/mlp_one_cifar75percentACC.pth", map_location=device))
 except RuntimeError:
     print("runtime error loading")
 
